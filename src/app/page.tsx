@@ -5,15 +5,34 @@ import DraggableColumns from '../components/DraggableColumns';
 
 
 const Home = () => {
-    const [inputCols, setInputCols] = useState(() => {
-        const savedColumnCount = localStorage.getItem('numColumns');
-        return savedColumnCount ? Number(savedColumnCount) : 3; // Default to 3
-    });
+    const [inputCols, setInputCols] = useState(3); // Default to 3 columns
     const [inputValue, setInputValue] = useState(String(inputCols)); // Default input value matches the number of columns
+
+    useLayoutEffect(() => {
+        // This code will run only in the browser
+        try {
+            const savedColumnCount = localStorage.getItem('numColumns');
+            if (savedColumnCount) {
+                const numCols = Number(savedColumnCount);
+                // Validate the retrieved value
+                if (!isNaN(numCols) && numCols >= 1 && numCols <= 4) {
+                    setInputCols(numCols);
+                    setInputValue(savedColumnCount); // Update input value
+                }
+            }
+        } catch (error) {
+            console.error('Failed to access localStorage:', error);
+            // If there's an error, we stay with the default value
+        }
+    }, []);
 
     // Update columns in local storage on input change
     useLayoutEffect(() => {
-        localStorage.setItem('numColumns', String(inputCols));
+        try {
+            localStorage.setItem('numColumns', String(inputCols));
+        } catch (error) {
+            console.error('Failed to save to localStorage:', error);
+        }
     }, [inputCols]);
 
     // Function to handle input change

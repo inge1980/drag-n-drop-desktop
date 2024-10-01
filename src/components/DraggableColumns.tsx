@@ -1,5 +1,5 @@
 "use client";
-import React, { useLayoutEffect, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
 import { DragDropContext, DropResult, DragUpdate, DragStart } from '@hello-pangea/dnd';
 import Column from '../components/Column/Column';
 import { Button, Badge } from '@mui/material';
@@ -41,34 +41,56 @@ const DraggableColumn = ({ cols }: { cols: number }) => {
     const [destination, setDestination] = useState<any>(null);
     const [source, setSource] = useState<any>(null);
 
-    // Load columns from local storage or create initial columns if none are found
-    const [columns, setColumns] = useState<ColumnsState>(() => {
-        const savedColumns = localStorage.getItem('columns');
-        return savedColumns ? JSON.parse(savedColumns) : createInitialColumns(cols);
-    });
+    // State to indicate if we're in the client
+    const [isClient, setIsClient] = useState(false);
 
-    // Initialize number of columns from local storage or use the provided prop
-    //const [inputCols, setInputCols] = useState(() => {
-    //    const savedColumnCount = localStorage.getItem('numColumns');
-    //    return savedColumnCount ? Number(savedColumnCount) : cols;
-    //});
+    // Load columns from local storage or create initial columns if none are found
+    const [columns, setColumns] = useState<ColumnsState>(() => createInitialColumns(cols));
+
+    useEffect(() => {
+        // Check if we are on the client
+        setIsClient(true);
+
+        // Load columns from local storage
+        try {
+            const savedColumns = localStorage.getItem('columns');
+            if (savedColumns) {
+                setColumns(JSON.parse(savedColumns));
+            }
+        } catch (error) {
+            console.error('Failed to load columns from localStorage:', error);
+        }
+    }, []);
 
     // Save columns to local storage
     useLayoutEffect(() => {
-        localStorage.setItem('columns', JSON.stringify(columns));
-    }, [columns]);
+        if (isClient) {
+            try {
+                localStorage.setItem('columns', JSON.stringify(columns));
+            } catch (error) {
+                console.error('Failed to save columns to localStorage:', error);
+            }
+        }
+    }, [columns, isClient]);
 
     // Adjust columns based on new cols prop
-    useLayoutEffect(() => {
-        const savedColumns = localStorage.getItem('columns');
-        if (savedColumns) {
-            const parsedColumns = JSON.parse(savedColumns);
-            const adjustedColumns = adjustColumns(parsedColumns, cols);
-            setColumns(adjustedColumns);
-        } else {
-            setColumns(createInitialColumns(cols));
+    useEffect(() => {
+        if (isClient) {
+            try {
+                const savedColumns = localStorage.getItem('columns');
+                if (savedColumns) {
+                    const parsedColumns = JSON.parse(savedColumns);
+                    const adjustedColumns = adjustColumns(parsedColumns, cols);
+                    setColumns(adjustedColumns);
+                } else {
+                    setColumns(createInitialColumns(cols));
+                }
+            } catch (error) {
+                console.error('Failed to adjust columns:', error);
+                setColumns(createInitialColumns(cols));
+            }
         }
-    }, [cols]);
+    }, [cols, isClient]);
     
     const onDragStart = (start: DragStart) => {
         console.log('onDragStart: ', start);
