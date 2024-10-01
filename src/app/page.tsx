@@ -1,95 +1,60 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+"use client";
+import React, { useLayoutEffect, useState } from 'react';
+import { TextField, Button } from '@mui/material';
+import DraggableColumns from '../components/DraggableColumns';
 
-export default function Home() {
-  return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol>
-          <li>
-            Get started by editing <code>src/app/page.tsx</code>.
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
 
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+const Home = () => {
+    const [inputCols, setInputCols] = useState(() => {
+        const savedColumnCount = localStorage.getItem('numColumns');
+        return savedColumnCount ? Number(savedColumnCount) : 3; // Default to 3
+    });
+    const [inputValue, setInputValue] = useState(String(inputCols)); // Default input value matches the number of columns
+
+    // Update columns in local storage on input change
+    useLayoutEffect(() => {
+        localStorage.setItem('numColumns', String(inputCols));
+    }, [inputCols]);
+
+    // Function to handle input change
+    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const value = event.target.value;
+        // Validate the input to be a number between 1 and 4
+        if (!isNaN(Number(value)) && Number(value) >= 1 && Number(value) <= 4) {
+            setInputValue(value);
+        }
+    };
+
+    // Function to update columns based on input value
+    const handleColumnChange = () => {
+        const value = Number(inputValue);
+        if (value >= 1 && value <= 4) {
+            setInputCols(value); // Update inputCols
+        }
+    };
+
+
+    return (
+        <div style={{ backgroundColor: 'white', minHeight: '100vh', padding: '16px' }}>
+            <TextField
+                label="Number of Columns"
+                type="number"
+                value={inputValue}
+                onChange={handleInputChange}
+                inputProps={{ min: 1, max: 4 }} // Set min/max attributes
+                variant="outlined"
+                style={{ marginRight: '8px' }} // Add some space to the right
             />
-            Deploy now
-          </a>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
+            <Button 
+                variant="contained" 
+                onClick={handleColumnChange} 
+                disabled={inputValue === ''} // Disable button if input is empty
+            >
+                Update Columns
+            </Button>
+            <DraggableColumns cols={inputCols} />
         </div>
-      </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
-}
+    );
+};
+
+export default Home;
