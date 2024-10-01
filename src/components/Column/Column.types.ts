@@ -3,6 +3,7 @@ export interface CardProps {
     title: string;
     content: string;
     index: number;
+    onDelete: (id: string) => void;
 }
   
 export interface ColumnProps {
@@ -11,4 +12,5 @@ export interface ColumnProps {
     draggingId: string | null;
     destination: { droppableId: string | null; index: number | null } | null;
     source: { droppableId: string | null; index: number | null } | null;
+    onDelete: (id: string) => void;
 }

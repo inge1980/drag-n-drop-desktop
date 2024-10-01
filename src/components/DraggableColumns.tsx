@@ -79,8 +79,6 @@ const DraggableColumn = ({ cols }: { cols: number }) => {
         console.log('onDragEnd: ', result);
         const { source, destination } = result;
 
-        setDraggingId(null);  // Reset dragging state
-
         // Do nothing if dropped outside the list
         if (!destination) return;
 
@@ -109,9 +107,7 @@ const DraggableColumn = ({ cols }: { cols: number }) => {
                 [destination.droppableId]: destinationCards,
             }));
         }
-        console.log('Source:', source);
-        console.log('Destination:', destination);
-        resetDraggingState(); // Reset dragging state after dropping
+        resetDraggingState();
     };
 
     const resetDraggingState = () => {
@@ -121,22 +117,38 @@ const DraggableColumn = ({ cols }: { cols: number }) => {
     };
     
     const onDragUpdate = (update: DragUpdate) => {
-        const { draggableId, destination: dest, source: src } = update; // Capture destination
+        const { draggableId, destination: dest, source: src } = update;
         console.log('onDragUpdate:', update);
         setDraggingId(draggableId);
-        setDestination(dest); // Store destination
-        setSource(src); // Store source
+        setDestination(dest);
+        setSource(src);
     };
 
     const addCard = (columnId: keyof typeof columns) => {
         console.log('addCard: ', columnId);
         const newCardId = uuidv4(); // Generate the new UUID
         const title = newCardId.slice(-5); // Get the last 5 characters of the UUID
-        const newCard: CardProps = { id: newCardId , title: `id: ${title}`, content: `New Card in ${columnId}`, index: columns[columnId].length };
+        const newCard: CardProps = { 
+            id: newCardId , 
+            title: `id: ${title}`, 
+            content: `New Card in ${columnId}`, 
+            index: columns[columnId].length,
+            onDelete: (id: string) => deleteCard(columnId, id)}
         setColumns((prev) => ({
             ...prev,
             [columnId]: [...prev[columnId], newCard],
         }));
+    };
+
+    // Function to delete a card
+    const deleteCard = (columnId: keyof typeof columns, cardId: string) => {
+        setColumns((prev) => {
+            const columnCards = prev[columnId].filter(card => card.id !== cardId);
+            return {
+                ...prev,
+                [columnId]: columnCards,
+            };
+        });
     };
 
     const resetColumns = () => {
@@ -149,7 +161,13 @@ const DraggableColumn = ({ cols }: { cols: number }) => {
                 <div style={{ display: 'flex' }}>
                     {Object.entries(columns).map(([columnId, columnCards]) => (
                         <div key={columnId}>
-                            <Column cards={columnCards} columnId={columnId} draggingId={draggingId} destination={destination} source={source} />
+                            <Column 
+                                cards={columnCards} 
+                                columnId={columnId} 
+                                draggingId={draggingId} 
+                                destination={destination} 
+                                source={source} 
+                                onDelete={(cardId: string) => deleteCard(columnId as keyof typeof columns, cardId)} />
                             <Button variant="contained" onClick={() => addCard(columnId as keyof typeof columns)}>
                                 Add Card to {columnId}
                             </Button>

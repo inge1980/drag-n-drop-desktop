@@ -6,9 +6,7 @@ import { ColumnProps } from './Column.types';
 import { columnStyles, placeholderStyles } from './Column.styles';
 import { COLUMN_TOP_SPACE, PAPER_GAP} from './Column.constants';
 
-const Column = ({ cards, columnId, draggingId, destination, source }: ColumnProps) => {
-
-    // settings for fine-tuning card and placeholder placements
+const Column = ({ cards, columnId, draggingId, destination, source, onDelete }: ColumnProps) => {
     const isEmptyColumn = cards.length === 0;
       
     return (
@@ -54,7 +52,7 @@ const Column = ({ cards, columnId, draggingId, destination, source }: ColumnProp
                     )}
 
                     <div style={{position: 'relative',}}>
-                        <Card id={card.id} title={card.title} content={card.content} index={index} />
+                        <Card onDelete={onDelete} id={card.id} title={card.title} content={card.content} index={index} />
                     </div>
 
                     {/* Placeholder for the currently dragged card */}

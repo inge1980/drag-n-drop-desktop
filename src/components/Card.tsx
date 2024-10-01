@@ -1,16 +1,17 @@
 import React from 'react';
 import { Draggable } from '@hello-pangea/dnd';
 import { Paper, Typography, IconButton } from '@mui/material';
-import DragHandleIcon from '@mui/icons-material/DragHandle'; // Importing a drag handle icon
+import { DragHandle as DragHandleIcon, Delete as DeleteIcon } from '@mui/icons-material';
 
 interface CardProps {
     id: string;
     title: string;
     content: string;
     index: number;
+    onDelete: (id: string) => void;
 }
 
-const Card = ({ id, title, content, index }: CardProps) => {
+const Card = ({ id, title, content, index, onDelete }: CardProps) => {
     return (
         <Draggable draggableId={id} index={index}>
             {(provided, snapshot) => (
@@ -22,10 +23,9 @@ const Card = ({ id, title, content, index }: CardProps) => {
                         margin: '8px',
                         marginBottom: '0px',
                         transition: 'box-shadow 0.2s ease',
-                        display: 'flex', // Flex for layout
+                        display: 'flex',
                         flexDirection: 'column', // Ensure items stack vertically
-                        ...provided.draggableProps.style,                        
-                        //opacity: snapshot.isDragging ? 0.5 : 1, // Set opacity based on dragging state
+                        ...provided.draggableProps.style,
                     }}
                 >
                     {/* Drag Handle Icon */}
@@ -38,6 +38,11 @@ const Card = ({ id, title, content, index }: CardProps) => {
                         <Typography gutterBottom variant="h6" style={{ padding: '8px', flexGrow: 1 }}>
                             {title}
                         </Typography>
+
+                        {/* Delete Button */}
+                        <IconButton onClick={() => onDelete(id)} color="secondary" size="small" style={{ marginLeft: '8px' }}>
+                            <DeleteIcon />
+                        </IconButton>
                     </div>
                     
                     {/* Card Content */}
