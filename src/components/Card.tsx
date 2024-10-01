@@ -40,7 +40,7 @@ const Card = ({ id, title, content, index, onDelete }: CardProps) => {
                         </Typography>
 
                         {/* Delete Button */}
-                        <IconButton onClick={() => onDelete(id)} color="secondary" size="small" style={{ marginLeft: '8px' }}>
+                        <IconButton onClick={() => onDelete(id)} color="error" size="small" style={{ marginLeft: '8px' }}>
                             <DeleteIcon />
                         </IconButton>
                     </div>

@@ -24,6 +24,7 @@ const columnStyles: Style = {
     title: {
         padding: `${COLUMN_PADDING}px`,
         marginTop: `${-COLUMN_TOP_SPACE}px`,
+        textAlign: 'center',
     },
 };
 

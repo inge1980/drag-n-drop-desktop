@@ -2,7 +2,8 @@
 import React, { useLayoutEffect, useState } from 'react';
 import { DragDropContext, DropResult, DragUpdate, DragStart } from '@hello-pangea/dnd';
 import Column from '../components/Column/Column';
-import { Button } from '@mui/material';
+import { Button, Badge } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
 import { v4 as uuidv4 } from 'uuid';
 import { CardProps } from '../components/Column/Column.types';
 
@@ -157,27 +158,57 @@ const DraggableColumn = ({ cols }: { cols: number }) => {
 
     return (
         <>
-            <DragDropContext onDragEnd={onDragEnd} onDragUpdate={onDragUpdate} onDragStart={onDragStart}>
-                <div style={{ display: 'flex' }}>
-                    {Object.entries(columns).map(([columnId, columnCards]) => (
-                        <div key={columnId}>
-                            <Column 
-                                cards={columnCards} 
-                                columnId={columnId} 
-                                draggingId={draggingId} 
-                                destination={destination} 
-                                source={source} 
-                                onDelete={(cardId: string) => deleteCard(columnId as keyof typeof columns, cardId)} />
-                            <Button variant="contained" onClick={() => addCard(columnId as keyof typeof columns)}>
-                                Add Card to {columnId}
-                            </Button>
-                        </div>
-                    ))}
-                </div>
+            <div style={{ position: 'relative', display: 'inline-block' }}> {/* Set relative positioning for the container */}
+                    <Button 
+                        variant="contained" 
+                        color="error" // Change to alert or warning color
+                        onClick={resetColumns} 
+                        style={{ right: 0, position: 'absolute', top: '-49px', height: '40px', }}
+                    >
+                        Reset Columns
+                    </Button>
+                <DragDropContext onDragEnd={onDragEnd} onDragUpdate={onDragUpdate} onDragStart={onDragStart}>
+                    <div style={{ display: 'flex', width: '100%' }}>
+                        {Object.entries(columns).map(([columnId, columnCards]) => (
+                            <div key={columnId}>
+                                <div style={{ textAlign: 'center' }}>
+                                    <Button 
+                                        variant="outlined" 
+                                        onClick={() => addCard(columnId as keyof typeof columns)}
+                                        color="success"
+                                        sx={{ width: '95%' }}
+                                        startIcon={
+                                            <div style={{
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                width: '36px', 
+                                                height: '36px',
+                                                borderRadius: '50%',
+                                                border: '2px solid white', 
+                                                backgroundColor: 'green',
+                                                color: 'white',
+                                                marginRight: '8px'
+                                            }}>
+                                                <AddIcon />
+                                            </div>
+                                        }>
+
+                                        Add Card to {columnId}
+                                    </Button>
+                                </div>
+                                <Column 
+                                    cards={columnCards} 
+                                    columnId={columnId} 
+                                    draggingId={draggingId} 
+                                    destination={destination} 
+                                    source={source} 
+                                    onDelete={(cardId: string) => deleteCard(columnId as keyof typeof columns, cardId)} />
+                            </div>
+                        ))}
+                    </div>
                 </DragDropContext>
-            <Button variant="contained" color="secondary" onClick={resetColumns} style={{ marginLeft: '16px' }}>
-                Reset Columns
-            </Button>
+            </div>
         </>
     );
 };

@@ -35,20 +35,22 @@ const Home = () => {
 
 
     return (
-        <div style={{ backgroundColor: 'white', minHeight: '100vh', padding: '16px' }}>
+        <div style={{ alignItems: 'center', backgroundColor: 'white', minHeight: '100vh', padding: '16px', position: 'relative', display: 'inline-block', }}>
             <TextField
-                label="Number of Columns"
+                label="Columns"
                 type="number"
                 value={inputValue}
                 onChange={handleInputChange}
                 inputProps={{ min: 1, max: 4 }} // Set min/max attributes
                 variant="outlined"
-                style={{ marginRight: '8px' }} // Add some space to the right
+                size="small" 
+                style={{ marginBottom: '8px', marginLeft: '8px', marginRight: '8px', height: '40px', display: 'block' }}
             />
             <Button 
                 variant="contained" 
                 onClick={handleColumnChange} 
                 disabled={inputValue === ''} // Disable button if input is empty
+                style={{ height: '40px', display: 'block', position: 'absolute', top: '14px', left: '120px', }}
             >
                 Update Columns
             </Button>
