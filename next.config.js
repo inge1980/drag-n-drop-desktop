@@ -1,8 +1,6 @@
-/** @type {import('next').NextConfig} */
+ /** @type {import('next').NextConfig} */
+ const nextConfig = {
+    output: "standalone",
+}
 
-module.exports = {
-    output: 'export',
-    distDir: 'dist',
-    basePath: '/drag-n-drop-desktop',
-    trailingSlash: true, // Optional, adds trailing slashes to URLs
-};
+module.exports = nextConfig
